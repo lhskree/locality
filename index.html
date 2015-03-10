@@ -8,6 +8,8 @@
 <script src="./libs/backbone.min.js"></script>
 <!-- Applicaiton -->
 <script src="./app/app.js"></script>
+<!-- Router -->
+<script src="./app/router.js"></script>
 <!-- Models -->
 <script src="./app/models/user.js"></script>
 <script src="./app/models/users.js"></script>
@@ -18,7 +20,7 @@
 
 <script id="userTemplate" type="text/template">
 
-
+<p> Ok </p>
 
 </script>
 
@@ -31,7 +33,7 @@
 		<input type="submit" value="Submit">
 	</form>
 
-	<button id="getUsers" onclick="getUsers();">Get User</button>
+	<a href="#users" id="getUsers" >Get a list of all users!</a>
 
 	<div class="users">
 
@@ -39,17 +41,10 @@
 
 	<script>
 
-	function getUsers () {
-		var users = new Locality.Models.Users();
-		users.sync("READ", users).success(function (data) {
-			data.forEach(function (d) {
-				users.add(d);
-			});
-			console.log(users.models[0].get("first"));
-		});
-		var usersView = new Locality.Views.Users();
-		usersView.render();
-	}
+	var router = new Locality.Router();
+
+	Backbone.history.start();
+
 	</script>
 
 </body>
