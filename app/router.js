@@ -12,8 +12,9 @@ Locality.Router = Backbone.Router.extend({
 			data.forEach(function (d) {
 				users.add(d);
 			});
-			var usersView = new Locality.Views.Users();
-			usersView.render(users);
+			// Generate a new view of the users
+			var usersView = new Locality.Views.Users({collection:users});
+			usersView.render();
 		});
 	}
 });

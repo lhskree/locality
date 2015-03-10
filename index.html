@@ -20,7 +20,7 @@
 
 <script id="userTemplate" type="text/template">
 
-<p> Ok </p>
+<p>Ok</p>
 
 </script>
 
@@ -41,9 +41,10 @@
 
 	<script>
 
-	var router = new Locality.Router();
-
-	Backbone.history.start();
+	$(document).ready(function () {
+		var router = new Locality.Router();
+		Backbone.history.start();
+	});
 
 	</script>
 
