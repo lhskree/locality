@@ -12,7 +12,7 @@ var server = http.createServer( function (request, response) {
 	request.route = (url.parse(request.url, true)).pathname,
 	request.ext = path.extname(request.route);
 
-	//console.dir(request.route + " : " + request.ext);
+	console.dir(request.route + " : " + request.ext + ": " + request.method);
 
 	// EXT MAP
 
@@ -63,7 +63,7 @@ function _POST (request, response) {
 
 		// POST ROUTES
 
-		if (request.route = "/createUser") {
+		if (request.route == "/createUser") {
 
 			var options = {};
 			fs.stat(__dirname + '/data/data.json', function (err, stats) {
@@ -95,6 +95,26 @@ function _GET(request, response) {
 
 	var fullBody = "";
 
+	// ROUTES
+	// This should be moved to a separate place later
+	if (request.route.indexOf("read") !== -1) {
+		fs.stat(__dirname + '/data/data.json', function (err, stats) {
+			if (err) console.error(err.message);
+			if (!stats) console.error("The file is empty."); // <------ This should throw an error
+		});
+		var store = fs.readFile('data/data.json', function (err, data) {
+				if (err) console.error(err.message); // Error reading the store !! <------ This should also throw
+
+				// Handle error
+
+				var store = JSON.parse(data);
+				console.dir(store);
+				console.dir(store.users);
+				response.writeHead(200, {'Content-type' : 'application/json'});
+				response.end(JSON.stringify(store.users));
+		});
+	} else {
+
 	// Create a read stream
 	var rs = fs.createReadStream(__dirname + request.route);
 
@@ -121,4 +141,8 @@ function _GET(request, response) {
 		response.writeHead(200, {'Content-type' : request.extMap[request.ext]});
 		response.end(fullBody);
 	});
+
+}
+
+
 }
