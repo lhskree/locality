@@ -12,7 +12,7 @@ var server = http.createServer( function (request, response) {
 	request.route = (url.parse(request.url, true)).pathname,
 	request.ext = path.extname(request.route);
 
-	console.dir(request.route + " : " + request.ext + ": " + request.method);
+	//console.dir(request.route + " : " + request.ext + ": " + request.method);
 
 	// EXT MAP
 
@@ -76,15 +76,38 @@ function _POST (request, response) {
 			});
 
 			var store = fs.readFile('data/data.json', function (err, data) {
-				if (err) console.error(err.message); // Error reading the store !!
+				if (err) console.error(err.message); // Error reading the store !! Transition to a 404-like page or pass some error message
 
-				// Handle error
+				// Handle error here
 
-				var store = (data.length) ? JSON.parse(data) : {};
+
+				var store = (data.length > 0) ? JSON.parse(data) : {};
 				store.users = store.users || [];
 				store.users.push(qs.parse(fullBody));
 				fs.writeFile('data/data.json', JSON.stringify(store), options, function (err) {
-					if (err) console.error(err.message);
+					if (err) console.error(err.message); // <--------- Log error to the server ; Send to an error.html page
+
+					// Handle error here
+
+
+
+
+					// Success!
+					// Create a read stream
+					var rs = fs.createReadStream(__dirname + "/success.html");
+					var fullBody = "";
+					// Read the stream
+					rs.on('data', function (chunk) {
+						fullBody += chunk;
+						// Flood detection
+						if (fullBody.length > 1e6) request.connection.destroy();
+					});
+
+					// Pipe the response to the client
+					rs.on('end', function () {
+						response.writeHead(200, {'Content-type' : 'text/html'});
+						response.end(fullBody);
+					});
 				});
 			});
 		}
@@ -108,8 +131,6 @@ function _GET(request, response) {
 				// Handle error
 
 				var store = JSON.parse(data);
-				console.dir(store);
-				console.dir(store.users);
 				response.writeHead(200, {'Content-type' : 'application/json'});
 				response.end(JSON.stringify(store.users));
 		});
