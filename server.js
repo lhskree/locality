@@ -108,8 +108,6 @@ function _GET(request, response) {
 				// Handle error
 
 				var store = JSON.parse(data);
-				console.dir(store);
-				console.dir(store.users);
 				response.writeHead(200, {'Content-type' : 'application/json'});
 				response.end(JSON.stringify(store.users));
 		});

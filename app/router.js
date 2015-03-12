@@ -7,6 +7,7 @@ Locality.Router = Backbone.Router.extend({
 	},
 
 	getUsers : function () {
+		console.log("Transitioned to getUsers");
 		var users = new Locality.Models.Users();
 		users.sync("READ", users).success(function (data) {
 			data.forEach(function (d) {

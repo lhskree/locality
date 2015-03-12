@@ -1,13 +1,12 @@
 Locality = Locality || {};
 
 Locality.Views.User = Backbone.View.extend({
-	el : '.user',
-	tagname : 'li',
-	template : _.template,
+	className : 'user',
+	tagName : 'li',
 	render : function () {
-		this.$el.html("ok");
-		//this.$el.html(this.template($("#userTemplate").html(), this.model));
-		console.log(this.$el);
-		return this.$el;
+		var which = this;
+		console.log(which.model.toJSON());
+		var compiled = _.template($("#userTemplate").html());
+		return this.$el.addClass(this.className).html(compiled(which.model.toJSON()));
 	}
 });
