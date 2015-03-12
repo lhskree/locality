@@ -14,7 +14,7 @@ a {
 	color: #565656;
 }
 
-.users {
+#outlet {
 	margin: 2em;
 	padding: .5em;
 	background-color:coral;

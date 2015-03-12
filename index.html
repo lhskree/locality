@@ -18,9 +18,17 @@
 <script src="./app/views/users.js"></script>
 </head>
 
-<script id="userTemplate" type="text/template">
+<script id="user-template" type="text/template">
 
 	<h3><a href="#user/<%= first %>"><%= first %></a> <%= last %></h3>
+
+</script>
+
+<script id="users-template" type="text/template">
+
+<% _.each(user, function () { %>
+<h2><%= user.first %></h2>
+<% )}; %>
 
 </script>
 
@@ -35,7 +43,7 @@
 
 	<a href="#users" id="getUsers" >Get a list of all users!</a>
 
-	<div class="users">
+	<div id="outlet">
 
 	</div>
 
