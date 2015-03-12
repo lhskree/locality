@@ -10,7 +10,9 @@ var server = http.createServer( function (request, response) {
 
 	// Gets the parsed url, path, and file extension
 	request.route = (url.parse(request.url, true)).pathname,
-	request.ext = path.extname(request.route);
+	request.ext = path.extname(request.route),
+	request.query = qs.parse(request.url.split("?")[1]);
+	console.log(request.query);
 
 	//console.dir(request.route + " : " + request.ext + ": " + request.method);
 
@@ -120,7 +122,15 @@ function _GET(request, response) {
 
 	// ROUTES
 	// This should be moved to a separate place later
-	if (request.route.indexOf("read") !== -1) {
+	if (!request.ext) {
+		request.on('data', function (chunk) {
+			fullBody += chunk;
+		});
+
+		request.on('end', function () {
+			console.log(fullBody + "is the full body");
+		});
+
 		fs.stat(__dirname + '/data/data.json', function (err, stats) {
 			if (err) console.error(err.message);
 			if (!stats) console.error("The file is empty."); // <------ This should throw an error
@@ -131,8 +141,19 @@ function _GET(request, response) {
 				// Handle error
 
 				var store = JSON.parse(data);
+
 				response.writeHead(200, {'Content-type' : 'application/json'});
-				response.end(JSON.stringify(store.users));
+				// All users
+				if (request.route == "/users") response.end(JSON.stringify(store.users));
+				else {
+					var requestedUser;
+					store.users.forEach(function(user) {
+						console.log(user.first + " : " + request.query.first);
+						if (user.first == request.query.first) requestedUser = user;
+					});
+					console.log(requestedUser);
+					if (requestedUser) response.end(JSON.stringify(requestedUser));
+				}
 		});
 	} else {
 

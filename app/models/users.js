@@ -1,6 +1,6 @@
 Locality = Locality || {};
 
 Locality.Models.Users = Backbone.Collection.extend({
-	url : "/read/Users",
+	url : "users",
 	model : Locality.Models.User
 });
