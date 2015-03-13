@@ -2,7 +2,12 @@
 <html>
 <head>
 <title>Home Page</title>
-<link rel="stylesheet" href="./main.css">
+
+<!-- CSS -->
+<link rel="stylesheet" href="./css/bootstrap.min.css">
+<link rel="stylesheet" href="./css/main.css">
+
+<!-- Libs -->
 <script src="./libs/jquery.min.js"></script>
 <script src="./libs/underscore.min.js"></script>
 <script src="./libs/backbone.min.js"></script>
@@ -14,47 +19,34 @@
 <script src="./app/models/user.js"></script>
 <script src="./app/models/users.js"></script>
 <!-- Views -->
+<script src="./app/views/homepage.js"></script>
+<script src="./app/views/createUser.js"></script>
+<script src="./app/views/fileUpload.js"></script>
 <script src="./app/views/user.js"></script>
 <script src="./app/views/users.js"></script>
 </head>
 
-<script id="user-template" type="text/template">
-
-	<h3><a href="#user/<%= first %>"><%= first %></a> <%= last %></h3>
-
-</script>
-
-<script id="users-template" type="text/template">
-
-<% models.forEach( function(model) { %>
-	<h2><a href="#/user/<%= model.first %>"><%= model.first %> <%= model.last%></a></h2>
-<% }); %>
-
-</script>
-
 <body>
-	<h1>This is some test content</h1>
-	<h2>Create a new user</h2>
-	<form method="post" action="createUser" id="createUser">
-		<input name="first" type="text">
-		<input name="last" type="text">
-		<input type="submit" value="Submit">
-	</form>
-
-	<a href="#users" id="getUsers" >Get a list of all users!</a>
-
-	<div id="outlet">
-
-	</div>
+	<div class="container">
+		<h1 id="logo">Locality</h1>
+		<div id="outlet">
+		</div>
 
 	<script>
 
 	$(document).ready(function () {
-		var router = new Locality.Router();
-		Backbone.history.start();
+		$("#logo").click( function () {
+			window.location="/"
+		});
+		$.get("./templates.html").success(function (data) {
+			$("body").append(data);
+			var router = new Locality.Router();
+			Backbone.history.start();
+		});
 	});
 
 	</script>
+	</div>
 
 </body>
 </html>

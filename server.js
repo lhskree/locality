@@ -47,6 +47,18 @@ server.listen(port);
 console.log("Listening on port " + port + " . . .");
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 function _POST (request, response) {
 
 	var fullBody = "";
@@ -67,7 +79,7 @@ function _POST (request, response) {
 		if (request.route == "/createUser") {
 
 			var options = {};
-			fs.stat(__dirname + '/data/data.json', function (err, stats) {
+			fs.stat(__dirname + '/data/users.json', function (err, stats) {
 				if (err) console.error(err.message);
 				if (stats) { // The file already exists
 					options = { flags : 'r', encoding : 'utf-8'};
@@ -76,7 +88,7 @@ function _POST (request, response) {
 				}
 			});
 
-			var store = fs.readFile('data/data.json', function (err, data) {
+			var store = fs.readFile('data/users.json', function (err, data) {
 				if (err) console.error(err.message); // Error reading the store !! Transition to a 404-like page or pass some error message
 
 				// Handle error here
@@ -85,7 +97,7 @@ function _POST (request, response) {
 				var store = (data.length > 0) ? JSON.parse(data) : {};
 				store.users = store.users || [];
 				store.users.push(qs.parse(fullBody));
-				fs.writeFile('data/data.json', JSON.stringify(store), options, function (err) {
+				fs.writeFile('data/users.json', JSON.stringify(store), options, function (err) {
 					if (err) console.error(err.message); // <--------- Log error to the server ; Send to an error.html page
 
 					// Handle error here

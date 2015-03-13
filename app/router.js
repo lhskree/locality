@@ -2,9 +2,29 @@ Locality = Locality || {};
 
 Locality.Router = Backbone.Router.extend({
 	routes : {
-		"" : function () {console.log("Back at home!");},
+		"" : "homepage",
+		"upload": "fileUpload",
+		"new" : "createUser",
 		"users" : "getUsers",
 		"user/:first" : "getUser",
+	},
+
+	homepage : function () {
+		console.log("Back at home!");
+		var home = new Locality.Views.Homepage();
+		$("#outlet").html(home.render());
+	},
+
+	fileUpload : function () {
+		console.log("Uploading a file!");
+		var fileUpload = new Locality.Views.fileUpload();
+		$("#outlet").html(fileUpload.render());
+	},
+
+	createUser : function () {
+		console.log("Creating a new user!");
+		var createUser = new Locality.Views.CreateUser();
+		$("#outlet").html(createUser.render());
 	},
 
 	getUsers : function () {
