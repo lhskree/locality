@@ -26,9 +26,9 @@
 
 <script id="users-template" type="text/template">
 
-<% _.each(user, function () { %>
-<h2><%= user.first %></h2>
-<% )}; %>
+<% models.forEach( function(model) { %>
+	<h2><a href="#/user/<%= model.first %>"><%= model.first %> <%= model.last%></a></h2>
+<% }); %>
 
 </script>
 
