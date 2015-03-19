@@ -1,0 +1,62 @@
+<!-- Templates -->
+<!-- these should eventually be compiled and externalised -->
+<!-- requirejs? -->
+
+<!-- All Users -->
+<script id="users-template" type="text/template">
+
+<h2>All Users</h2>
+<% models.forEach( function(model) { %>
+	<h2><a href="#user/<%= model.first %>"><%= model.first %> <%= model.last%></a></h2>
+<% }); %>
+
+</script>
+
+
+<!-- Single User -->
+<script id="user-template" type="text/template">
+
+	<h3><a href="#user/<%= first %>"><%= first %></a> <%= last %></h3>
+
+</script>
+
+<!-- Homepage -->
+<script id="homepage-template" type="text/template">
+
+<h1>Homepage</h1>
+	<nav id="options">
+		<ul>
+			<li>
+				<a href="#new" id="createUser">Make a new user account!</a>
+			</li>
+			<li>
+				<a href="#users" id="getUsers">Get a list of all users!</a>
+			</li>
+			<li>
+				<a href="#upload" id="uploadFile">Upload a file!</a>
+			</li>
+		</ul>
+	</nav>
+
+</script>
+
+<!-- Create User Form -->
+<script id="create-user-template" type="text/template">
+
+	<form method="post" action="createUser" id="createUser">
+		<input id="first" name="first" type="text" required placeholder="What's your first name?">
+		<input id="last" name="last" type="text" required placeholder="What's your appellation?">
+		<textarea id="bio" name="bio" required placeholder="Tell us a little about yourself!"></textarea>
+		<input type="submit" value="Submit">
+	</form>
+
+</script>
+
+<!-- Upload Form -->
+<script id="file-upload-template" type="text/template">
+
+	<form>
+		<input type="file">
+	</form>
+
+</script>
