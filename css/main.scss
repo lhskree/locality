@@ -48,6 +48,8 @@ ul {
 }
 
 #logo {
+    font-weight: bold;
+    font-size: 48px;
 	text-align: center;
 	font-family: $mainFont;
 }
@@ -56,7 +58,18 @@ ul {
 	padding: 1em;
 }
 
+
+
+
+
+
 /* homepage */
+#world {
+    margin: 0 auto;
+    display: block;
+    max-width: 900px;
+}
+
 .homepage a {
 }
 
@@ -72,23 +85,32 @@ ul {
 #options li {
 	margin: 2em 20px;
 	padding: .5em 1em;
-	background-color: skyblue;
+	background-color: $accentColor;
 	border-radius: 5px;
 	display: inline-block;
 	font-size: 1.25em;
-	color: #444;
+	color: white;
 	transition: .5s;
 }
 
 #options li:hover {
-	background-color: #566789;
+	background-color: lighten($accentColor, 15%);
 	color: white;
 	transition: .5s;
 }
+
+
+
+
+
 
 /* users */
 .users h2 {
 	text-align: center;
 }
+
+
+
+
 
 /* user */

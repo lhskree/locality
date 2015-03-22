@@ -28,6 +28,8 @@ ul {
   list-style: none; }
 
 #logo {
+  font-weight: bold;
+  font-size: 48px;
   text-align: center;
   font-family: "Webly", Arial, Helvetica, sans-serif; }
 
@@ -35,6 +37,11 @@ ul {
   padding: 1em; }
 
 /* homepage */
+#world {
+  margin: 0 auto;
+  display: block;
+  max-width: 900px; }
+
 #options {
   width: 100%; }
 
@@ -45,15 +52,15 @@ ul {
 #options li {
   margin: 2em 20px;
   padding: .5em 1em;
-  background-color: skyblue;
+  background-color: #A52368;
   border-radius: 5px;
   display: inline-block;
   font-size: 1.25em;
-  color: #444;
+  color: white;
   transition: .5s; }
 
 #options li:hover {
-  background-color: #566789;
+  background-color: #d63e8f;
   color: white;
   transition: .5s; }
 
