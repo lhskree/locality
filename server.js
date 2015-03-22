@@ -19,11 +19,13 @@ var server = http.createServer( function (request, response) {
 
 	request.extMap = {
 	  '.ico': 'image/x-icon',
-	  '.html': 'text/html',
-	  '.js': 'text/javascript',
-	  '.json': 'application/json',
-	  '.css': 'text/css',
-	  '.png': 'image/png',
+	  '.html' : 'text/html',
+	  '.js' : 'text/javascript',
+	  '.json' : 'application/json',
+	  '.css' : 'text/css',
+	  '.jpg' : 'image/jpg',
+	  './gif' : 'image/gif',
+	  '.png' : 'image/png',
 	  '.ttf' : 'application/x-font-ttf',
 	  '.otf' : 'application/x-font-otf'
 	};
@@ -132,8 +134,10 @@ function _POST (request, response) {
 function _GET(request, response) {
 
 	// Debug the request
+	/*
 	console.dir(request.route);
 	console.dir(request.ext);
+	*/
 
 	var fullBody = "";
 
@@ -171,11 +175,11 @@ function _GET(request, response) {
 	} else {
 
 	// Handle file encoding
-	var enconding;
-	if (request.ext === ".ttf" || request.ext === ".otf") { // This should handle all binary types, not just fonts
-		encoding = 'base64';
-	} else {
-		encoding = 'utf-8';
+	var encoding = "binary"; // Default is binary
+	if (request.ext === ".html") encoding = "utf-8";
+	if (request.ext === ".gif") {
+		encoding = "binary";
+		console.dir(request.route + "::" + request.ext + "Binary encoding");
 	}
 
 	// Create a read stream

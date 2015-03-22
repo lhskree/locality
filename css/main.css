@@ -8,13 +8,12 @@
   font-family: Lobster;
   src: url(../fonts/Lobster.otf); }
 body {
-  background-color: #474757;
-  color: #bfbfbf; }
+  background-color: white;
+  color: #555; }
 
 .container {
   min-height: 600px;
-  max-width: 900px;
-  background-color: #222; }
+  max-width: 900px; }
 
 a {
   text-decoration: none;

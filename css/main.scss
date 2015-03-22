@@ -1,0 +1,94 @@
+$fontColorMain: #555;
+$linkColor: #26AA7B;
+
+$accentColor: #A52368;
+$lightAccentColor: #368E98;
+$darkAccentColor: #13464B;
+
+$mainFont: 'Webly', Arial, Helvetica, sans-serif;
+
+@font-face {
+	font-family: Lane;
+    src:url(../fonts/LANENAR.ttf);
+}
+
+@font-face {
+	font-family: Webly;
+    src:url(../fonts/weblysleekuil.ttf);
+}
+
+@font-face {
+	font-family: Lobster;
+    src:url(../fonts/Lobster.otf);
+}
+
+body {
+	background-color: white;
+	color: $fontColorMain;
+}
+
+.container {
+	min-height: 600px;
+	max-width: 900px;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+a:hover {
+	text-decoration: none;
+	color: inherit;
+}
+
+li,
+ul {
+	list-style: none;
+}
+
+#logo {
+	text-align: center;
+	font-family: $mainFont;
+}
+
+#outlet {
+	padding: 1em;
+}
+
+/* homepage */
+.homepage a {
+}
+
+#options {
+	width: 100%;
+}
+
+#options ul {
+	display: flex;
+	justify-content: center;
+}
+
+#options li {
+	margin: 2em 20px;
+	padding: .5em 1em;
+	background-color: skyblue;
+	border-radius: 5px;
+	display: inline-block;
+	font-size: 1.25em;
+	color: #444;
+	transition: .5s;
+}
+
+#options li:hover {
+	background-color: #566789;
+	color: white;
+	transition: .5s;
+}
+
+/* users */
+.users h2 {
+	text-align: center;
+}
+
+/* user */
