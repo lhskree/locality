@@ -23,7 +23,9 @@ var server = http.createServer( function (request, response) {
 	  '.js': 'text/javascript',
 	  '.json': 'application/json',
 	  '.css': 'text/css',
-	  '.png': 'image/png'
+	  '.png': 'image/png',
+	  '.ttf' : 'application/x-font-ttf',
+	  '.otf' : 'application/x-font-otf'
 	};
 
 	// ROUTES
@@ -129,6 +131,10 @@ function _POST (request, response) {
 
 function _GET(request, response) {
 
+	// Debug the request
+	console.dir(request.route);
+	console.dir(request.ext);
+
 	var fullBody = "";
 
 	// ROUTES
@@ -164,8 +170,16 @@ function _GET(request, response) {
 	// Request for a file	
 	} else {
 
+	// Handle file encoding
+	var enconding;
+	if (request.ext === ".ttf" || request.ext === ".otf") { // This should handle all binary types, not just fonts
+		encoding = 'base64';
+	} else {
+		encoding = 'utf-8';
+	}
+
 	// Create a read stream
-	var rs = fs.createReadStream(__dirname + request.route);
+	var rs = fs.createReadStream(__dirname + request.route, {encoding: encoding});
 
 	// Read stream failed to read from path / 404 for html pages
 	rs.on('error', function (err) {
@@ -174,7 +188,7 @@ function _GET(request, response) {
 		if (request.ext === ".html") {
 			response.end("<p>" + err.message + "</p><p>404::< " + request.route + " >::not found.</p>");
 		} else {
-			response.end();
+			response.end("File not found!");
 		}
 	});
 
@@ -188,7 +202,7 @@ function _GET(request, response) {
 	// Pipe the response to the client
 	rs.on('end', function () {
 		response.writeHead(200, {'Content-type' : request.extMap[request.ext]});
-		response.end(fullBody);
+		response.end(fullBody, encoding);
 	});
 
 }
