@@ -3,7 +3,7 @@ Locality = Locality || {};
 Locality.Router = Backbone.Router.extend({
 	routes : {
 		"" : "homepage",
-		"upload": "fileUpload",
+		"share": "shareStory",
 		"new" : "createUser",
 		"users" : "getUsers",
 		"user/:first" : "getUser",
@@ -15,10 +15,10 @@ Locality.Router = Backbone.Router.extend({
 		$("#outlet").html(home.render());
 	},
 
-	fileUpload : function () {
-		console.log("Uploading a file!");
-		var fileUpload = new Locality.Views.fileUpload();
-		$("#outlet").html(fileUpload.render());
+	shareStory : function () {
+		console.log("Sharing a new story!");
+		var shareStory = new Locality.Views.shareStory();
+		$("#outlet").html(shareStory.render());
 	},
 
 	createUser : function () {
