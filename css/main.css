@@ -9,7 +9,7 @@
   src: url(../fonts/Lobster.otf); }
 body {
   background-color: white;
-  color: #555; }
+  color: #444; }
 
 .container {
   min-height: 600px;
@@ -81,5 +81,36 @@ ul {
 #createUser {
   display: block;
   width: 500px; }
+
+.form {
+  max-width: 700px;
+  margin: 0 auto; }
+
+.form input,
+.form textarea {
+  color: #444;
+  font-size: 14px;
+  margin: 10px auto;
+  padding: 8px;
+  outline: none;
+  border: 1px solid #A52368;
+  border-radius: 7px;
+  transition: .5s; }
+
+.form textarea {
+  resize: none;
+  height: 250px; }
+
+.form .submit {
+  font-size: 16px;
+  color: white;
+  background-color: #A52368;
+  border-radius: 7px;
+  padding: 8px;
+  transition: .5s; }
+
+.form .submit:hover {
+  background-color: #d63e8f;
+  transition: .5s; }
 
 /*# sourceMappingURL=main.css.map */

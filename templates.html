@@ -44,13 +44,14 @@
 <!-- Create User Form -->
 <script id="create-user-template" type="text/template">
 
-	<form method="post" action="createUser" id="createUser">
-		<input id="first" name="first" type="text" required placeholder="What's your first name?">
-		<input id="last" name="last" type="text" required placeholder="What's your appellation?">
-        <input id="password" name="password" type="password" required placeholder="Please enter an 8+ alphanumric password">
-        <input id="password2" name="password2" type="password" required placeholder="Please confirm your password">
-		<textarea id="bio" name="bio" required placeholder="Tell us a little about yourself!"></textarea>
-		<input type="submit" value="Submit">
+	<form method="post" action="createUser" id="createUser" class="form">
+		<input id="username" name="username" type="text" required placeholder="Enter your username!" class="col-lg-12">
+		<input id="first" name="first" type="text" required placeholder="What's your first name?" class="col-lg-6">
+		<input id="last" name="last" type="text" required placeholder="What's your last name?" class="col-lg-6">
+    <input id="password" name="password" type="password" required placeholder="Please enter an 8+ alphanumeric password" class="col-lg-12">
+    <input id="password2" name="password2" type="password" required placeholder="Please confirm your password" class="col-lg-12">
+		<textarea id="bio" name="bio" required placeholder="Tell us a little about yourself!" class="col-lg-12"></textarea>
+		<input type="submit" value="Submit" class="submit col-lg-6 col-lg-push-3">
 	</form>
 
 </script>

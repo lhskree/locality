@@ -1,4 +1,4 @@
-$fontColorMain: #555;
+$fontColorMain: #444;
 $linkColor: #26AA7B;
 
 $accentColor: #A52368;
@@ -130,4 +130,40 @@ ul {
     
     display: block;
     width: 500px;
+}
+
+.form {
+	max-width: 700px;
+	margin: 0 auto;
+}
+
+.form input,
+.form textarea {
+	color: $fontColorMain;
+	font-size: 14px;
+	margin: 10px auto;
+	padding: 8px;
+	outline: none;
+	border: 1px solid $accentColor;
+	border-radius: 7px;
+	transition: .5s;
+}
+
+.form textarea {
+	resize: none;
+	height: 250px;
+}
+
+.form .submit {
+	font-size: 16px;
+	color: white;
+	background-color: $accentColor;
+	border-radius: 7px;
+	padding: 8px;
+	transition: .5s;
+}
+
+.form .submit:hover {
+	background-color: lighten($accentColor, 15%);
+	transition: .5s;
 }
