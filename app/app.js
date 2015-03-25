@@ -19,8 +19,20 @@ $(window).keyup(function () {
 });
 
 // Validation for createUser
-function validateCreateUser() {
+$("#createUser").submit(function(e) {
+    e.preventDefault();
+        // Something something field validation . . .
     
-}
+    // Now check that the username isn't already taken
+    $.post("checkUsernameAvailability", { username : username })
+        .success(function (data) {
+            console.log(data);
+        })
+        .failure(function () {
+            console.log("The route returned a 404. Cool."); // Dingus error handling
+        });
+
+});
+
     
 });

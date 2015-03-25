@@ -98,34 +98,71 @@ function _POST (request, response) {
 				// Handle error here
 
 
-				var store = (data.length > 0) ? JSON.parse(data) : {};
+				// Either parse data or create blank objects / arrays
+				var store = (data) ? JSON.parse(data) : {};
 				store.users = store.users || [];
-				store.users.push(qs.parse(fullBody));
-				fs.writeFile('data/users.json', JSON.stringify(store), options, function (err) {
-					if (err) console.error(err.message); // <--------- Log error to the server ; Send to an error.html page
 
-					// Handle error here
+				// Validate data
+				fullBody = qs.parse(fullBody);
+				// Make sure the passwords match
+				if (fullBody.password !== fullBody.password2) { // Handle this whole situation better
+					console.error("Warning! Passwords don't match. Shouldn't you have validated this client-side?");
+				}
+				// Make sure the username isn't already taken
+				var usernameAlreadyExists = false;
+				for (var i = 0; i < store.users.length; i++) {
+					if (fullBody.username.toLowerCase() === store.users[i].username.toLowerCase()) {
+						usernameAlreadyExists = true;
+						break;
+					}
+				}
+
+				if (usernameAlreadyExists) {
+					var rs = fs.createReadStream(__dirname + "/failure.html");
+					fullBody = "";
+						// Read the stream
+						rs.on('data', function (chunk) {
+							fullBody += chunk;
+							// Flood detection
+							if (fullBody.length > 1e6) request.connection.destroy();
+						});
+
+						// Pipe the response to the client
+						rs.on('end', function () {
+							response.writeHead(200, {
+								'Set-Cookie' : 'username=taken'});
+							response.end();
+						});
+
+				} else {
+					// Data is valid; create the new user
+					store.users.push(fullBody);
+					fs.writeFile('data/users.json', JSON.stringify(store), options, function (err) {
+						if (err) console.error(err.message); // <--------- Log error to the server ; Send to an error.html page
+
+						// Handle error here
 
 
 
+						// Success!
+						// Create a read stream and re-route to success.html
+						var rs = fs.createReadStream(__dirname + "/success.html");
+						fullBody = "";
+						// Read the stream
+						rs.on('data', function (chunk) {
+							fullBody += chunk;
+							// Flood detection
+							if (fullBody.length > 1e6) request.connection.destroy();
+						});
 
-					// Success!
-					// Create a read stream
-					var rs = fs.createReadStream(__dirname + "/success.html");
-					var fullBody = "";
-					// Read the stream
-					rs.on('data', function (chunk) {
-						fullBody += chunk;
-						// Flood detection
-						if (fullBody.length > 1e6) request.connection.destroy();
+						// Pipe the response to the client
+						rs.on('end', function () {
+							response.writeHead(200, {'Content-type' : 'text/html',
+								'Set-Cookie' : 'loggedin=true'}); // Set a secure cookie...this one isn't very secure but will work
+							response.end(fullBody);
+						});
 					});
-
-					// Pipe the response to the client
-					rs.on('end', function () {
-						response.writeHead(200, {'Content-type' : 'text/html'});
-						response.end(fullBody);
-					});
-				});
+				}
 			});
 		}
 	});
@@ -144,13 +181,13 @@ function _GET(request, response) {
 	// ROUTES
 	// This should be moved to a separate place later
 
-	// Request for data
+	// Request for user data
 	if (request.query) {
-		fs.stat(__dirname + '/data/data.json', function (err, stats) {
+		fs.stat(__dirname + '/data/users.json', function (err, stats) {
 			if (err) console.error(err.message);
 			if (!stats) console.error("The file is empty."); // <------ This should throw an error
 		});
-		var store = fs.readFile('data/data.json', function (err, data) {
+		var store = fs.readFile('data/users.json', function (err, data) {
 				if (err) console.error(err.message); // Error reading the store !! <------ This should also throw
 
 				// Handle error
