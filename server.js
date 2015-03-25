@@ -65,6 +65,10 @@ console.log("Listening on port " + port + " . . .");
 
 function _POST (request, response) {
 
+	// DEBUG
+	console.log(request.route);
+	console.log(request.ext);
+
 	var fullBody = "";
 
 	// Parse the request
@@ -74,9 +78,11 @@ function _POST (request, response) {
 		if (fullBody.length > 1e6) request.connection.destroy();
 	});
 
-
 	// Create or update the request
 	request.on('end', function () {
+
+		// DEBUG
+		console.log("Fullbody::" + fullBody);
 
 		// POST ROUTES
 

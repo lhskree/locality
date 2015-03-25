@@ -44,7 +44,7 @@
 <!-- Create User Form -->
 <script id="create-user-template" type="text/template">
 
-	<form method="post" id="createUser" class="form">
+	<form method="post" id="createUser" class="form" onsubmit="return validateCreateUser()">
 		<input id="username" name="username" type="text" required placeholder="Enter your username!" class="col-lg-12">
 		<input id="first" name="first" type="text" required placeholder="What's your first name?" class="col-lg-6">
 		<input id="last" name="last" type="text" required placeholder="What's your last name?" class="col-lg-6">
