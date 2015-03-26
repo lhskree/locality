@@ -21,7 +21,7 @@ $(document).ready(function() {
 });
 
 function validateCreateUser(form) {
-    //var username = form.serialize();
-    $.post("checkUsernameAvailability", {name:"thisisthestring"});
-    return false;
+    var username = $("#username").val();
+    $.post("checkUsernameAvailability", {"username":username});
+    return true;
 }

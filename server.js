@@ -85,6 +85,16 @@ function _POST (request, response) {
 		console.log("Fullbody::" + fullBody);
 
 		// POST ROUTES
+		if (request.route == "/checkUsernameAvailability") {
+			fs.readFile('data/users.json', function (err, data) {
+				if (err) console.error(err.message); // HANDLE ME
+
+				//
+
+				var store = JSON.parse(data.toString());
+				console.log(store);
+			});
+		}
 
 		if (request.route == "/createUser") {
 
@@ -98,14 +108,14 @@ function _POST (request, response) {
 				}
 			});
 
-			var store = fs.readFile('data/users.json', function (err, data) {
+			fs.readFile('data/users.json', function (err, data) {
 				if (err) console.error(err.message); // Error reading the store !! Transition to a 404-like page or pass some error message
 
 				// Handle error here
 
 
 				// Either parse data or create blank objects / arrays
-				var store = (data) ? JSON.parse(data) : {};
+				var store = (data) ? JSON.parse(data.toString()) : {};
 				store.users = store.users || [];
 
 				// Validate data
