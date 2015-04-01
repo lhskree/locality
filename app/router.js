@@ -3,7 +3,8 @@ Locality = Locality || {};
 Locality.Router = Backbone.Router.extend({
 	routes : {
 		"" : "homepage",
-		"share": "shareStory",
+		"share" : "shareStory",
+		"login" : "userLogin",
 		"new" : "createUser",
 		"users" : "getUsers",
 		"user/:first" : "getUser",
@@ -44,5 +45,12 @@ Locality.Router = Backbone.Router.extend({
 			var userView = new Locality.Views.User({model:user});
 			$("#outlet").html(userView.render());
 		});
+	},
+
+	userLogin : function () {
+		console.log("Transitioned to userLogin");
+		var userLogin = new Locality.Views.UserLogin();
+		$("#outlet").html(userLogin.render());
 	}
+
 });

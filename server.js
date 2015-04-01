@@ -85,91 +85,9 @@ function _POST (request, response) {
 		console.log("Fullbody::" + fullBody);
 
 		// POST ROUTES
-		if (request.route == "/checkUsernameAvailability") {
-			fs.readFile('data/users.json', function (err, data) {
-				if (err) console.error(err.message); // HANDLE ME
-
-				//
-
-				var store = JSON.parse(data.toString()); // <---------------- This needs to handle if no initial data is present
-				fullBody = qs.parse(fullBody);
-
-				// Make sure the username isn't already taken
-				var usernameAlreadyExists = false;
-				for (var i = 0; i < store.users.length; i++) {
-					if (fullBody.username.toLowerCase() === store.users[i].username.toLowerCase()) {
-						console.log(fullBody.username.toLowerCase() + " : " + store.users[i].username.toLowerCase());
-						usernameAlreadyExists = true;
-						break;
-					}
-				}
-
-				if (usernameAlreadyExists) {
-					response.end("invalid");
-				} else {
-					response.end("valid");
-				}
-			});
-		}
-
-		if (request.route == "/createUser") {
-
-			var options = {};
-			fs.stat(__dirname + '/data/users.json', function (err, stats) {
-				if (err) console.error(err.message);
-				if (stats) { // The file already exists
-					options = { flags : 'r', encoding : 'utf-8'};
-				} else { // The file does not exist
-					options = { flags : 'w', encoding : 'utf-8'};
-				}
-			});
-
-			fs.readFile('data/users.json', function (err, data) {
-				if (err) console.error(err.message); // Error reading the store !! Transition to a 404-like page or pass some error message
-
-				// Handle error here
-
-
-				// Either parse data or create blank objects / arrays
-				var store = (data) ? JSON.parse(data.toString()) : {};
-				store.users = store.users || [];
-
-				// Validate data
-				fullBody = qs.parse(fullBody);
-				// Make sure the passwords match
-				if (fullBody.password !== fullBody.password2) { // Handle this whole situation better
-					console.error("Warning! Passwords don't match. Shouldn't you have validated this client-side?");
-				}
-
-				// Data is valid; create the new user
-				store.users.push(fullBody);
-				fs.writeFile('data/users.json', JSON.stringify(store), options, function (err) {
-					if (err) console.error(err.message); // <--------- Log error to the server ; Send to an error.html page
-
-					// Handle error here
-
-
-
-					// Success!
-					// Create a read stream and re-route to success.html
-					var rs = fs.createReadStream(__dirname + "/success.html");
-					fullBody = "";
-					// Read the stream
-					rs.on('data', function (chunk) {
-						fullBody += chunk;
-						// Flood detection
-						if (fullBody.length > 1e6) request.connection.destroy();
-					});
-
-					// Pipe the response to the client
-					rs.on('end', function () {
-						response.writeHead(200, {'Content-type' : 'text/html',
-							'Set-Cookie' : 'loggedin=true'}); // Set a secure cookie...this one isn't very secure but will work
-						response.end(fullBody);
-					});
-				});
-			});
-		}
+		if (request.route == "/checkUsernameAvailability") checkUsernameAvailability(fullBody, response);
+		if (request.route == "/createUser") createUser(fullBody, response);
+		if (request.route == "/userLogin") userLogin(fullBody, response);
 	});
 }
 
@@ -254,4 +172,157 @@ function _GET(request, response) {
 }
 
 
+}
+
+function checkUsernameAvailability (fullBody, response) {
+	fs.readFile('data/users.json', function (err, data) {
+		if (err) console.error(err.message); // HANDLE ME
+
+		// If there are new users, then the first username is valid
+		if (!data.toString().length) response.end("valid"); return;
+
+		var store = JSON.parse(data.toString());
+		fullBody = qs.parse(fullBody);
+
+		// Make sure the username isn't already taken
+		var usernameAlreadyExists = false;
+		for (var i = 0; i < store.users.length; i++) {
+			if (fullBody.username.toLowerCase() === store.users[i].username.toLowerCase()) {
+				console.log(fullBody.username.toLowerCase() + " : " + store.users[i].username.toLowerCase());
+				usernameAlreadyExists = true;
+				break;
+			}
+		}
+
+		if (usernameAlreadyExists) {
+			response.end("invalid");
+		} else {
+			response.end("valid");
+		}
+	});
+}
+
+function createUser(fullBody, response) {
+	var options = {};
+	fs.stat(__dirname + '/data/users.json', function (err, stats) {
+		if (err) console.error(err.message);
+		if (stats) { // The file already exists
+			options = { flags : 'r', encoding : 'utf-8'};
+		} else { // The file does not exist
+			options = { flags : 'w', encoding : 'utf-8'};
+		}
+	});
+
+	fs.readFile('data/users.json', function (err, data) {
+		if (err) console.error(err.message); // Error reading the store !! Transition to a 404-like page or pass some error message
+
+		// Handle error here
+
+
+		// Either parse data or create blank objects / arrays
+		var store = data.toString() ? JSON.parse(data.toString()) : {};
+		store.users = store.users || [];
+
+		// Validate data
+		fullBody = qs.parse(fullBody);
+		// Make sure the passwords match
+		if (fullBody.password !== fullBody.password2) { // Handle this whole situation better
+			console.error("Warning! Passwords don't match. Shouldn't you have validated this client-side?");
+		}
+
+		// Data is valid; create the new user
+		var user = {};
+		user.username = fullBody.username,
+		user.first = fullBody.first,
+		user.last = fullBody.last,
+		user.pass = fullBody.password,
+		user.bio = fullBody.bio,
+		user.creationDate = Date.now();
+
+		store.users.push(user);
+		fs.writeFile('data/users.json', JSON.stringify(store), options, function (err) {
+			if (err) console.error(err.message); // <--------- Log error to the server ; Send to an error.html page
+
+			// Handle error here
+
+
+
+			// Success!
+			// Create a read stream and re-route to success.html
+			var rs = fs.createReadStream(__dirname + "/success.html");
+			fullBody = "";
+			// Read the stream
+			rs.on('data', function (chunk) {
+				fullBody += chunk;
+				// Flood detection
+				if (fullBody.length > 1e6) request.connection.destroy();
+			});
+
+			// Pipe the response to the client
+			rs.on('end', function () {
+				response.writeHead(200, {'Content-type' : 'text/html',
+					'Set-Cookie' : 'loggedin=true', // Set a secure cookie...this one isn't very secure but will work
+					'Set-Cookie' : 'username=' + user.username});
+				response.end(fullBody);
+			});
+		});
+	});
+}
+
+function userLogin (fullBody, response) {
+	fs.readFile('data/users.json', function (err, data) {
+		if (err) console.error(err.message); // HANDLE ME
+
+		// If there are no users, you can't login
+		if (data.toString().length) {
+
+			var store = JSON.parse(data.toString());
+			fullBody = qs.parse(fullBody);
+
+			// Check that the username extists
+			var usernameExists = false,
+				passwordValid = false;
+			for (var i = 0; i < store.users.length; i++) {
+				console.log(fullBody.username + " :" + fullBody.password + "\n" + store.users[i].username + " :" + store.users[i].pass)
+				if (fullBody.username === store.users[i].username) {
+					usernameExists = true;
+					if (fullBody.password === store.users[i].pass) {
+						passwordValid = true;
+						break;
+					}
+					break;
+				}
+			}
+		}
+		// Create a read stream
+		var rs = fs.createReadStream(__dirname + "/index.html");
+
+		// Read stream failed to read from path / 404 for html pages
+		rs.on('error', function (err) {
+			console.error(err.message);
+			response.writeHead(404, {'Content-type' : 'text/html'});
+			response.end("<p>" + err.message + "</p><p>404::<index.html>::not found.</p>");
+		});
+
+		// Read the stream
+		rs.on('data', function (chunk) {
+			fullBody += chunk;
+			// Flood detection
+			if (fullBody.length > 1e6) request.connection.destroy();
+		});
+
+		// Pipe the response to the client
+		rs.on('end', function () {
+			var cookie;
+			if (usernameExists && passwordValid) {
+				cookie = "loggedin=true";
+			} else { // There should be a few more cases here for other login failures
+				cookie = "loginerror=true";
+			}
+
+			response.writeHead(200, {'Content-type' : 'text/html',
+				'Set-Cookie' : cookie});
+			response.end(fullBody);
+		});
+	});
 }
