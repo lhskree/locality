@@ -36,7 +36,7 @@
 				<a href="#users" id="getUsers">All Users</a>
 			</li>
 			<li>
-				<a href="#share" id="shareStory">Create a Geist</a>
+				<a href="#share" id="shareStory" onclick="validateCredentials();">Create a Geist</a>
 			</li>
 		</ul>
 	</nav>
@@ -65,7 +65,7 @@
 	<form method="post" action="userLogin" id="userLogin" class="form">
 		<input id="username" name="username" type="text" required placeholder="Username" class="col-lg-12">
 		<input id="password" name="password" type="text" required placeholder="Password" class="col-lg-12">
-		<input type="submit" value="Login" class="submit col-lg-6 col-lg-push-3">
+		<input type="submit" value="Login" name="submit" class="submit col-lg-6 col-lg-push-3">
 	</form>
 
 </script>

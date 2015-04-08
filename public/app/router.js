@@ -31,7 +31,7 @@ Locality.Router = Backbone.Router.extend({
 	getUsers : function () {
 		console.log("Transitioned to getUsers");
 		var users = new Locality.Models.Users();
-		users.fetch({data:{all:true}}).success(function (data) {
+		users.fetch().success(function (data) {
 			// Generate a new view of the users
 			var usersView = new Locality.Views.Users({collection:users});
 			$("#outlet").html(usersView.render());
@@ -45,7 +45,7 @@ Locality.Router = Backbone.Router.extend({
 			var userView = new Locality.Views.User({model:user});
 			$("#outlet").html(userView.render());
 		});
-	},
+	},		
 
 	userLogin : function () {
 		console.log("Transitioned to userLogin");
