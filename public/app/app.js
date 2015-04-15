@@ -48,12 +48,3 @@ function getCookie(key) {
 	}
 	return false;
 }
-
-function validateCredentials() {
-	var loggedin = getCookie('loggedin');
-  if (loggedin) {
-  	console.log("Welcome, " + getCookie("username"));
-  } else {
-  	console.log("Error, not logged in.");
-  }
-}

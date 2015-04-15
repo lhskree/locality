@@ -8,6 +8,7 @@
 <h2>All Users</h2>
 <% models.forEach( function(model) { %>
 	<h2><a href="#user/<%= model.first %>"><%= model.first %> <%= model.last%></a></h2>
+	<span><%= model.username %> &mdash; <%= model.pass %></span>
 <% }); %>
 
 </script>
@@ -36,7 +37,10 @@
 				<a href="#users" id="getUsers">All Users</a>
 			</li>
 			<li>
-				<a href="#share" id="shareStory" onclick="validateCredentials();">Create a Geist</a>
+				<a href="#share" id="shareStory">Create a Geist</a>
+			</li>
+			<li>
+				<a href="logout" id="logout">Logout</a>
 			</li>
 		</ul>
 	</nav>
@@ -47,7 +51,7 @@
 <!-- Create User Form -->
 <script id="create-user-template" type="text/template">
 
-	<form method="post" action="createUser" id="createUser" class="form" onsubmit="return validateCreateUser(this)">
+	<form method="post" action="createUser" id="createUser" class="form" onsubmit="return validateCreateUser(this);">
 		<input id="username" name="username" type="text" required placeholder="Enter your username!" class="col-lg-12">
 		<input id="first" name="first" type="text" required placeholder="What's your first name?" class="col-lg-6">
 		<input id="last" name="last" type="text" required placeholder="What's your last name?" class="col-lg-6">
@@ -73,8 +77,12 @@
 <!-- Share Story Form -->
 <script id="share-story-template" type="text/template">
 
-	<form>
-		<input type="file">
+	<form method="post" action="createGeist" id="createGeist" class="form" onsubmit="return validateCreateGeist(this);" enctype="multipart/form-data">
+		<input id="geistLocation" name="geistLocation" type="text" required placeholder="Where is this Geist located?" class="col-lg-12">
+		<button id="geistGeolocate">Find Me</button>
+		<input id="geistPhoto" type="file">
+		<textarea id="geistStory" required placeholder="What's my story?" class="col-lg-12"></textarea>
+		<input type="submit" value="Create Geist" class="submit col-lg-6 col-lg-push-3">
 	</form>
 
 </script>

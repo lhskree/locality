@@ -44,6 +44,7 @@
 		$.get("./templates.html").success(function (data) {
 			$("body").append(data);
 			var router = new Locality.Router();
+			console.log("Templates loaded, starting router");
 			Backbone.history.start();
 		});
 	});

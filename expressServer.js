@@ -1,6 +1,7 @@
 var express = require('express'),
 	cookieParser = require('cookie-parser'),
 	bodyParser = require('body-parser'),
+	multer = require('multer'),
 	fs = require('fs'),
 	qs = require('querystring'),
 	path = require('path'),
@@ -11,6 +12,7 @@ var app = express();
 
 app.use(express.static('public'));
 app.use(cookieParser());
+app.use(multer({dest: './uploads/'}));
 app.use(bodyParser.urlencoded({extended:false}));
 
 var server = app.listen(port, function () {
@@ -58,11 +60,20 @@ app.get('/user', function (req, res) {
 		var store = JSON.parse(data);
 		var requestedUser;
 		store.users.forEach(function(user) {
-			console.log(user.first + " : " + req.query.first);
 			if (user.first == req.query.first) requestedUser = user;
 		});
 		if (requestedUser) res.end(JSON.stringify(requestedUser));
 	});
+});
+
+// Logout
+app.get('/logout', function (req, res) {
+	res.cookie('loggedin', 'false');
+	res.cookie('loginerror', 'false');
+	res.cookie('username', 'guest');
+	res.statusCode = 302;
+	res.set({'Location' : '/'})
+	res.end();
 });
 
 app.post('/checkUsernameAvailability', function (req, res) {
@@ -72,9 +83,13 @@ app.post('/checkUsernameAvailability', function (req, res) {
 app.post('/createUser', function (req, res) {
 	createUser(req, res);
 });
-		
+			
 app.post('/userLogin', function (req, res) {
 	userLogin(req, res);
+});
+
+app.post('/createGeist', function (req, res) {
+	createGeist(req, res);
 });
 
 
@@ -108,7 +123,7 @@ function checkUsernameAvailability (req, res) {
 
 function createUser(req, res) {
 	var options = {};
-	fs.stat(__dirname + '/data/users.json', function (err, stats) {
+	fs.stat('public/data/users.json', function (err, stats) {
 		if (err) console.error(err.message);
 		if (stats) { // The file already exists
 			options = { flags : 'r', encoding : 'utf-8'};
@@ -117,7 +132,7 @@ function createUser(req, res) {
 		}
 	});
 
-	fs.readFile('data/users.json', function (err, data) {
+	fs.readFile('/public/data/users.json', function (err, data) {
 		if (err) console.error(err.message); // Error reading the store !! Transition to a 404-like page or pass some error message
 
 		// Handle error here
@@ -144,31 +159,21 @@ function createUser(req, res) {
 		user.creationDate = Date.now();
 
 		store.users.push(user);
-		fs.writeFile('data/users.json', JSON.stringify(store), options, function (err) {
+		fs.writeFile('/public/data/users.json', JSON.stringify(store), options, function (err) {
 			if (err) console.error(err.message); // <--------- Log error to the server ; Send to an error.html page
 
 			// Handle error here
 
 
 
-			// Success!
-			// Create a read stream and re-route to success.html
-			var rs = fs.createReadStream(__dirname + "/success.html");
-			fullBody = "";
-			// Read the stream
-			rs.on('data', function (chunk) {
-				fullBody += chunk;
-				// Flood detection
-				if (fullBody.length > 1e6) request.connection.destroy();
-			});
-
-			// Pipe the res to the client
-			rs.on('end', function () {
-				res.writeHead(200, {'Content-type' : 'text/html',
-					'Set-Cookie' : 'loggedin=true', // Set a secure cookie...this one isn't very secure but will work
-					'Set-Cookie' : 'username=' + user.username});
-				res.end(fullBody);
-			});
+			
+					
+			res.statusCode = 302;
+			res.cookie('loggedin', 'true', {'max-age':300});
+			res.cookie('loginerror', 'false', {'max-age':300});
+			res.cookie('username', fullBody.username);
+			res.set({'Location' : '/success'})
+			res.end();
 		});
 	});
 }
@@ -203,15 +208,21 @@ function userLogin (req, res) {
 
 		var loginCookie, validCookie;
 		if (usernameExists && passwordValid) {
-			res.cookie('loggedin', 'true');
-			res.cookie('loginerror', 'false');
+			res.cookie('loggedin', 'true', {'max-age':300});
+			res.cookie('loginerror', 'false', {'max-age':300});
 			res.cookie('username', fullBody.username);
 		} else { // There should be a few more cases here for other login failures
-			res.cookie('loggedin', 'false');
-			res.cookie('loginerror', 'true');
+			res.cookie('loggedin', 'false', {'max-age':300});
+			res.cookie('loginerror', 'true', {'max-age':300});
 		}
 		res.statusCode = 302;
 		res.set({'Location' : '/'})
 		res.end();
 	});
+}
+
+function createGeist(req, res) {
+	console.log("Creating files . . .");
+	console.log(req.body);
+	console.log(req.files);
 }

@@ -14,6 +14,7 @@ Locality.Router = Backbone.Router.extend({
 		console.log("Back at home!");
 		var home = new Locality.Views.Homepage();
 		$("#outlet").html(home.render());
+		home.controller();
 	},
 
 	shareStory : function () {
