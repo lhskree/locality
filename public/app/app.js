@@ -48,3 +48,7 @@ function getCookie(key) {
 	}
 	return false;
 }
+
+function validateCreateGeist (form) {
+  return true;
+}

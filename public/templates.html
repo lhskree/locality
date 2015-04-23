@@ -80,7 +80,7 @@
 	<form method="post" action="createGeist" id="createGeist" class="form" onsubmit="return validateCreateGeist(this);" enctype="multipart/form-data">
 		<input id="geistLocation" name="geistLocation" type="text" required placeholder="Where is this Geist located?" class="col-lg-12">
 		<button id="geistGeolocate">Find Me</button>
-		<input id="geistPhoto" type="file">
+		<input id="geistPhoto" name="geistPhoto" type="file" accept="image/*">
 		<textarea id="geistStory" required placeholder="What's my story?" class="col-lg-12"></textarea>
 		<input type="submit" value="Create Geist" class="submit col-lg-6 col-lg-push-3">
 	</form>

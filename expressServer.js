@@ -1,19 +1,30 @@
 var express = require('express'),
 	cookieParser = require('cookie-parser'),
 	bodyParser = require('body-parser'),
-	multer = require('multer'),
+	busboy = require('busboy-connect'),
 	fs = require('fs'),
-	qs = require('querystring'),
-	path = require('path'),
-	port = process.argv[2];
+	path = require('path');
+	
+var port = process.argv[2];
+
+// App init
 
 var app = express();
 
 
 app.use(express.static('public'));
 app.use(cookieParser());
-app.use(multer({dest: './uploads/'}));
-app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded( {extended:false} ));
+
+var multerOptions = {
+	dest : "./public/data/img",
+	rename : function (fieldname, filename, req, res) {
+		console.log(req.cookies);
+	}
+};
+
+app.use(multer( multerOptions ));
 
 var server = app.listen(port, function () {
 
@@ -94,7 +105,7 @@ app.post('/createGeist', function (req, res) {
 
 
 function checkUsernameAvailability (req, res) {
-	fs.readFile('data/users.json', function (err, data) {
+	fs.readFile('./public/data/users.json', function (err, data) {
 		if (err) console.error(err.message); // HANDLE ME
 
 		// If there are new users, then the first username is valid
@@ -107,7 +118,7 @@ function checkUsernameAvailability (req, res) {
 		var usernameAlreadyExists = false;
 		for (var i = 0; i < store.users.length; i++) {
 			if (fullBody.username.toLowerCase() === store.users[i].username.toLowerCase()) {
-				console.log(fullBody.username.toLowerCase() + " : " + store.users[i].username.toLowerCase());
+				//console.log(fullBody.username.toLowerCase() + " : " + store.users[i].username.toLowerCase());
 				usernameAlreadyExists = true;
 				break;
 			}
@@ -123,7 +134,7 @@ function checkUsernameAvailability (req, res) {
 
 function createUser(req, res) {
 	var options = {};
-	fs.stat('public/data/users.json', function (err, stats) {
+	fs.stat('./public/data/users.json', function (err, stats) {
 		if (err) console.error(err.message);
 		if (stats) { // The file already exists
 			options = { flags : 'r', encoding : 'utf-8'};
@@ -132,7 +143,7 @@ function createUser(req, res) {
 		}
 	});
 
-	fs.readFile('/public/data/users.json', function (err, data) {
+	fs.readFile('./public/data/users.json', function (err, data) {
 		if (err) console.error(err.message); // Error reading the store !! Transition to a 404-like page or pass some error message
 
 		// Handle error here
@@ -143,6 +154,8 @@ function createUser(req, res) {
 		store.users = store.users || [];
 
 		// Validate data
+		console.log(req.body);
+		console.log(req.query);
 		fullBody = qs.parse(fullBody);
 		// Make sure the passwords match
 		if (fullBody.password !== fullBody.password2) { // Handle this whole situation better
@@ -159,7 +172,7 @@ function createUser(req, res) {
 		user.creationDate = Date.now();
 
 		store.users.push(user);
-		fs.writeFile('/public/data/users.json', JSON.stringify(store), options, function (err) {
+		fs.writeFile('./public/data/users.json', JSON.stringify(store), options, function (err) {
 			if (err) console.error(err.message); // <--------- Log error to the server ; Send to an error.html page
 
 			// Handle error here
@@ -194,7 +207,7 @@ function userLogin (req, res) {
 			var usernameExists = false,
 				passwordValid = false;
 			for (var i = 0; i < store.users.length; i++) {
-				console.log(fullBody.username + " :" + fullBody.password + "\n" + store.users[i].username + " :" + store.users[i].pass)
+				console.log(fullBody.username + " (request): " + fullBody.password + "\n" + store.users[i].username + " (store):" + store.users[i].pass)
 				if (fullBody.username === store.users[i].username) {
 					usernameExists = true;
 					if (fullBody.password === store.users[i].pass) {
@@ -222,7 +235,6 @@ function userLogin (req, res) {
 }
 
 function createGeist(req, res) {
-	console.log("Creating files . . .");
-	console.log(req.body);
-	console.log(req.files);
+	console.log("Uploading files . . .");
+	// Files handled by multer
 }
