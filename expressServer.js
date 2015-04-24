@@ -1,7 +1,9 @@
+// Required middleware
+
 var express = require('express'),
 	cookieParser = require('cookie-parser'),
 	bodyParser = require('body-parser'),
-	busboy = require('busboy-connect'),
+	busboy = require('connect-busboy'),
 	fs = require('fs'),
 	path = require('path');
 	
@@ -11,20 +13,11 @@ var port = process.argv[2];
 
 var app = express();
 
-
 app.use(express.static('public'));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded( {extended:false} ));
-
-var multerOptions = {
-	dest : "./public/data/img",
-	rename : function (fieldname, filename, req, res) {
-		console.log(req.cookies);
-	}
-};
-
-app.use(multer( multerOptions ));
+app.use(busboy());
 
 var server = app.listen(port, function () {
 
@@ -236,5 +229,20 @@ function userLogin (req, res) {
 
 function createGeist(req, res) {
 	console.log("Uploading files . . .");
-	// Files handled by multer
+
+	// All uploads are handled by busboy middleware
+	req.pipe(req.busboy);
+
+	// Handler for individual images
+	req.busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
+		console.log('File [' + fieldname + ']: filename: ' + filename + ', encoding: ' + encoding + ', mimetype: ' + mimetype);
+		file.pipe(fs.createWriteStream("./this.jpg"));
+	});
+
+	// When all images are received
+	req.busboy.on('finish', function() {
+    console.log('Done parsing form!');
+    res.writeHead(303, { Connection: 'close', Location: '/' });
+    res.end();
+  });
 }
