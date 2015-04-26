@@ -9,6 +9,12 @@ var express = require('express'),
 	
 var port = process.argv[2];
 
+// Paths
+
+var p_root = "./public/";
+var p_data = "./public/data/"
+var p_img = "./public/data/img";
+
 // App init
 
 var app = express();
@@ -31,12 +37,12 @@ var server = app.listen(port, function () {
 // All users
 app.get('/users', function (req, res) {
 
-	fs.stat(__dirname + '/public/data/users.json', function (err, stats) {
+	fs.stat(p_data + 'users.json', function (err, stats) {
 		if (err) console.error("Error getting stats on the file: " + err.message);
 		if (!stats) console.error("The file is empty."); // <------ This should throw an error
 	});
 	
-	fs.readFile(__dirname + '/public/data/users.json', function (err, data) {
+	fs.readFile(p_data + 'users.json', function (err, data) {
 		if (err) console.error("Error reading the store: " + err.message); // Error reading the store !! <------ This should also throw
 
 		// Handle error
@@ -51,12 +57,12 @@ app.get('/users', function (req, res) {
 // Single user
 app.get('/user', function (req, res) {
 
-	fs.stat(__dirname + '/public/data/users.json', function (err, stats) {
+	fs.stat(p_data + 'users.json', function (err, stats) {
 		if (err) console.error("Error getting stats on the file: " + err.message);
 		if (!stats) console.error("The file is empty."); // <------ This should throw an error
 	});
 	
-	fs.readFile(__dirname + '/public/data/users.json', function (err, data) {
+	fs.readFile(p_data + 'users.json', function (err, data) {
 		if (err) console.error("Error reading the store: " + err.message); // Error reading the store !! <------ This should also throw
 
 		// Handle error
@@ -98,7 +104,7 @@ app.post('/createGeist', function (req, res) {
 
 
 function checkUsernameAvailability (req, res) {
-	fs.readFile('./public/data/users.json', function (err, data) {
+	fs.readFile(p_data + 'users.json', function (err, data) {
 		if (err) console.error(err.message); // HANDLE ME
 
 		// If there are new users, then the first username is valid
@@ -127,7 +133,7 @@ function checkUsernameAvailability (req, res) {
 
 function createUser(req, res) {
 	var options = {};
-	fs.stat('./public/data/users.json', function (err, stats) {
+	fs.stat(p_data + 'users.json', function (err, stats) {
 		if (err) console.error(err.message);
 		if (stats) { // The file already exists
 			options = { flags : 'r', encoding : 'utf-8'};
@@ -136,7 +142,7 @@ function createUser(req, res) {
 		}
 	});
 
-	fs.readFile('./public/data/users.json', function (err, data) {
+	fs.readFile(p_data + 'users.json', function (err, data) {
 		if (err) console.error(err.message); // Error reading the store !! Transition to a 404-like page or pass some error message
 
 		// Handle error here
@@ -165,7 +171,7 @@ function createUser(req, res) {
 		user.creationDate = Date.now();
 
 		store.users.push(user);
-		fs.writeFile('./public/data/users.json', JSON.stringify(store), options, function (err) {
+		fs.writeFile(p_data + 'users.json', JSON.stringify(store), options, function (err) {
 			if (err) console.error(err.message); // <--------- Log error to the server ; Send to an error.html page
 
 			// Handle error here
@@ -186,7 +192,7 @@ function createUser(req, res) {
 
 function userLogin (req, res) {
 
-	fs.readFile(__dirname + '/public/data/users.json', function (err, data) {
+	fs.readFile(p_data + 'users.json', function (err, data) {
 		if (err) console.error(err.message); // HANDLE ME
 
 		var fullBody = req.body;
@@ -230,13 +236,16 @@ function userLogin (req, res) {
 function createGeist(req, res) {
 	console.log("Uploading files . . .");
 
+	var qs = req.query;
+	var cookies = req.cookies;
+
 	// All uploads are handled by busboy middleware
 	req.pipe(req.busboy);
 
 	// Handler for individual images
 	req.busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
 		console.log('File [' + fieldname + ']: filename: ' + filename + ', encoding: ' + encoding + ', mimetype: ' + mimetype);
-		file.pipe(fs.createWriteStream("./this.jpg"));
+		file.pipe(fs.createWriteStream(p_img + filename, { encoding : encoding }));
 	});
 
 	// When all images are received
