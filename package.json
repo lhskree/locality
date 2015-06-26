@@ -1,0 +1,25 @@
+{
+  "name": "gets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "public/",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lhskree/locality.git"
+  },
+  "author": "Logan H. Sobczak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lhskree/locality/issues"
+  },
+  "homepage": "https://github.com/lhskree/locality#readme",
+  "devDependencies": {
+    "express": "^4.13.0",
+    "fs": "0.0.2",
+    "nodemon": "^1.3.7",
+    "path": "^0.11.14"
+  }
+}
