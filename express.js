@@ -5,8 +5,19 @@ var express = require('express'),
 	bodyParser = require('body-parser'),
 	busboy = require('connect-busboy'),
 	fs = require('fs'),
-	path = require('path');
+	path = require('path'),
+    MongoClient = require('mongodb').MongoClient,
+    assert = require('assert');
 	
+// Connect to MongoDB
+
+var dbUrl = 'mongodb://localhost:27017/geist';
+MongoClient.connect(dbUrl, function(err, db) {
+  assert.equal(null, err);
+  console.log("Connected correctly to server.");
+  db.close();
+});
+
 var port = process.argv[2];
 
 // Paths
@@ -52,6 +63,31 @@ app.get('/users', function (req, res) {
 		res.set({'Content-type' : 'application/json'});
 		res.end(JSON.stringify(store.users));
 	});
+});
+
+// Create a new user
+app.post('/users', function (req, res) {
+
+    var body = req.body;     
+         
+    var insertDocument = function (db, callback) {
+        db.collection('users').insertOne(
+            body,
+            function(err, result) {
+                assert.equal(err, null);
+                console.log("Inserted a document into the restaurants collection.");
+                callback(result);
+        });
+    };
+         
+    MongoClient.connect(dbUrl, function(err, db) {
+        assert.equal(null, err);
+        insertDocument(db, function() {
+            db.close();
+        });
+    });
+    
+    res.end(JSON.stringify({"success":"true"}));
 });
 
 // Single user
