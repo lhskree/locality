@@ -1,115 +1,120 @@
-// Required middleware
-
+// REQUIRES
+// =============================================
 var express = require('express'),
 	cookieParser = require('cookie-parser'),
 	bodyParser = require('body-parser'),
 	busboy = require('connect-busboy'),
 	fs = require('fs'),
 	path = require('path'),
-    MongoClient = require('mongodb').MongoClient,
-    assert = require('assert');
-	
-// Connect to MongoDB
+  MongoClient = require('mongodb').MongoClient,
+  assert = require('assert');
 
-var dbUrl = 'mongodb://localhost:27017/geist';
-MongoClient.connect(dbUrl, function(err, db) {
+
+
+
+// CONSTANTS
+// =============================================
+var DB_URL = 'mongodb://localhost:27017/geist';
+var PORT = process.argv[2];
+
+
+
+
+
+
+
+
+
+// INITIALIZATIONS
+// =============================================
+
+// Connect to MongoDB
+// =============================================
+MongoClient.connect(DB_URL, function(err, db) {
   assert.equal(null, err);
   console.log("Connected correctly to server.");
   db.close();
 });
 
-var port = process.argv[2];
-
-// Paths
-
-var p_root = "./public/";
-var p_data = "./public/data/"
-var p_img = "./public/data/img";
-
-// App init
-
+// Application initialization and middleware binding
+// =============================================
 var app = express();
-
 app.use(express.static('public'));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded( {extended:false} ));
 app.use(busboy());
 
-var server = app.listen(port, function () {
-
-	var host = server.address().address;
-	var port = server.address().port;
-
-	console.log("Listening on:%s", port);
-
+// Server initialization
+// =============================================
+var server = app.listen(PORT, function () {
+	console.log("Making magic happen on: %s", PORT);
 });
 
-// All users
+
+
+
+
+
+
+
+
+
+// ROUTES
+// =============================================
+
+// USER ROUTES
+// =============================================
+
+// Get all users
 app.get('/users', function (req, res) {
 
-	fs.stat(p_data + 'users.json', function (err, stats) {
-		if (err) console.error("Error getting stats on the file: " + err.message);
-		if (!stats) console.error("The file is empty."); // <------ This should throw an error
-	});
-	
-	fs.readFile(p_data + 'users.json', function (err, data) {
-		if (err) console.error("Error reading the store: " + err.message); // Error reading the store !! <------ This should also throw
-
-		// Handle error
-
-		var store = JSON.parse(data);
-		res.status(200);
-		res.set({'Content-type' : 'application/json'});
-		res.end(JSON.stringify(store.users));
-	});
 });
 
+
 // Create a new user
-app.post('/users', function (req, res) {
+app.post('/user', function (req, res) {
 
     var body = req.body;     
-         
+
     var insertDocument = function (db, callback) {
         db.collection('users').insertOne(
             body,
             function(err, result) {
                 assert.equal(err, null);
-                console.log("Inserted a document into the restaurants collection.");
+                console.log("Inserted a document into the users collection.");
                 callback(result);
         });
     };
          
-    MongoClient.connect(dbUrl, function(err, db) {
+    MongoClient.connect(DB_URL, function(err, db) {
         assert.equal(null, err);
         insertDocument(db, function() {
             db.close();
         });
     });
-    
-    res.end(JSON.stringify({"success":"true"}));
+    res.end(JSON.stringify(body));
 });
 
-// Single user
-app.get('/user', function (req, res) {
+// Adds 'id' as a dynamic parameter for GET, PUT, DELETE for a user
+app.param('id', function (req, res, next, id) {
+	req.id = id;
+  next();
+})
 
-	fs.stat(p_data + 'users.json', function (err, stats) {
-		if (err) console.error("Error getting stats on the file: " + err.message);
-		if (!stats) console.error("The file is empty."); // <------ This should throw an error
-	});
-	
-	fs.readFile(p_data + 'users.json', function (err, data) {
-		if (err) console.error("Error reading the store: " + err.message); // Error reading the store !! <------ This should also throw
+// Get a user
+app.get('/user:id', function (req, res) {
+	res.end(JSON.stringify({}));
+});
 
-		// Handle error
+// Update a user
+app.put('/user:id', function (req, res) {
+	res.end(JSON.stringify({}));
+});
 
-		var store = JSON.parse(data);
-		var requestedUser;
-		store.users.forEach(function(user) {
-			if (user.first == req.query.first) requestedUser = user;
-		});
-		if (requestedUser) res.end(JSON.stringify(requestedUser));
-	});
+// Delet a user
+app.delete('/user:id', function (req, res) {
+	res.end(JSON.stringify({}));
 });
 
 // Logout
@@ -122,20 +127,8 @@ app.get('/logout', function (req, res) {
 	res.end();
 });
 
-app.post('/checkUsernameAvailability', function (req, res) {
-	checkUsernameAvailability(req, res)
-});
-
-app.post('/createUser', function (req, res) {
-	createUser(req, res);
-});
-			
 app.post('/userLogin', function (req, res) {
 	userLogin(req, res);
-});
-
-app.post('/createGeist', function (req, res) {
-	createGeist(req, res);
 });
 
 

@@ -22,21 +22,7 @@ $(document).ready(function() {
 
 function validateCreateUser(form) {
   var username = $("#username").val();
-  $.post("checkUsernameAvailability", {
-      "username": username
-    })
-    .done(function(response) {
-      console.log(response);
-      if (response === "valid") {
-        return true;
-      } else {
-        console.log("Username is already taken");
-        return false;
-      }
-    })
-    .fail(function() {
-      console.log("Something very sad happened.");
-    });
+  return true;
 }
 
 function getCookie(key) {
